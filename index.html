@@ -1,0 +1,1295 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="AmiCalc">
+<title>AmiCalc – Calculadora de Amigurumis</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #fdf6f0;
+    --cream: #faf0e6;
+    --surface: #ffffff;
+    --border: #e8d5c4;
+    --border2: #f0e0d0;
+    --rose: #e8547a;
+    --rose2: #f07a96;
+    --rose-bg: #fdeef3;
+    --lilac: #9b72cf;
+    --lilac-bg: #f3eeff;
+    --mint: #2d9b7a;
+    --mint-bg: #edfbf5;
+    --amber: #d4820a;
+    --amber-bg: #fff8ec;
+    --text: #2a1f1a;
+    --muted: #8c7060;
+    --light: #c4a898;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 24px 16px 60px;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background:
+      radial-gradient(circle at 10% 20%, rgba(232,84,122,0.06) 0%, transparent 40%),
+      radial-gradient(circle at 90% 80%, rgba(155,114,207,0.06) 0%, transparent 40%);
+    pointer-events: none; z-index: 0;
+  }
+
+  .wrapper { max-width: 520px; margin: 0 auto; position: relative; z-index: 1; }
+
+  /* HEADER */
+  header { margin-bottom: 28px; text-align: center; }
+  .header-icon { font-size: 48px; margin-bottom: 8px; display: block; }
+  h1 {
+    font-family: 'Fraunces', serif;
+    font-size: 32px; font-weight: 900;
+    color: var(--text); letter-spacing: -1px;
+    line-height: 1;
+  }
+  h1 span { color: var(--rose); }
+  .subtitle { font-size: 13px; color: var(--muted); margin-top: 6px; }
+
+  /* SECTION */
+  .section {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 20px;
+    padding: 20px;
+    margin-bottom: 14px;
+    box-shadow: 0 2px 12px rgba(140,100,80,0.06);
+  }
+
+  .section-header {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .section-icon {
+    width: 36px; height: 36px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; flex-shrink: 0;
+  }
+
+  .section-title {
+    font-family: 'Fraunces', serif;
+    font-size: 16px; font-weight: 700;
+    color: var(--text);
+  }
+
+  .section-sub { font-size: 11px; color: var(--muted); margin-top: 1px; }
+
+  /* INPUTS */
+  .field { margin-bottom: 12px; }
+  .field:last-child { margin-bottom: 0; }
+
+  .field-label {
+    font-size: 11px; font-weight: 600;
+    color: var(--muted); text-transform: uppercase;
+    letter-spacing: 0.6px; margin-bottom: 5px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+
+  .field-hint { font-size: 10px; color: var(--light); font-weight: 400; text-transform: none; letter-spacing: 0; }
+
+  .input-wrap { position: relative; }
+
+  input[type="number"], input[type="text"], select {
+    width: 100%;
+    background: var(--cream);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 11px 14px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.2s, background 0.2s;
+    -webkit-appearance: none;
+  }
+
+  input:focus, select:focus {
+    border-color: var(--rose);
+    background: white;
+  }
+
+  .input-prefix, .input-suffix {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    font-size: 13px; color: var(--muted); font-weight: 600; pointer-events: none;
+  }
+  .input-prefix { left: 12px; }
+  .input-suffix { right: 12px; }
+  .has-prefix input { padding-left: 26px; }
+  .has-suffix input { padding-right: 36px; }
+
+  .row2 { display: flex; gap: 10px; }
+  .row2 .field { flex: 1; }
+
+  /* CHENILLE COLORS */
+  .color-list { display: flex; flex-direction: column; gap: 8px; }
+
+  .color-item {
+    display: flex; gap: 8px; align-items: center;
+    background: var(--cream); border: 1.5px solid var(--border);
+    border-radius: 12px; padding: 10px 12px;
+  }
+
+  .color-swatch {
+    width: 28px; height: 28px; border-radius: 8px;
+    border: 2px solid var(--border); flex-shrink: 0;
+    cursor: pointer; overflow: hidden;
+  }
+  .color-swatch input[type="color"] {
+    width: 200%; height: 200%;
+    margin: -50%; border: none; padding: 0; cursor: pointer;
+    background: none;
+  }
+
+  .color-name {
+    flex: 1; background: white; border: 1.5px solid var(--border);
+    border-radius: 8px; padding: 7px 10px; font-size: 13px;
+    color: var(--text); outline: none;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .color-name:focus { border-color: var(--rose); }
+
+  .color-grams {
+    width: 70px; background: white; border: 1.5px solid var(--border);
+    border-radius: 8px; padding: 7px 10px; font-size: 13px;
+    color: var(--text); outline: none; font-family: 'DM Sans', sans-serif;
+    text-align: center;
+  }
+  .color-grams:focus { border-color: var(--rose); }
+
+  .color-del {
+    background: none; border: none; color: var(--light);
+    cursor: pointer; font-size: 16px; padding: 2px 4px;
+    transition: color 0.15s; flex-shrink: 0;
+  }
+  .color-del:hover { color: var(--rose); }
+
+  .btn-add-color {
+    width: 100%; padding: 10px; background: var(--rose-bg);
+    border: 1.5px dashed var(--rose2); border-radius: 12px;
+    color: var(--rose); font-family: 'DM Sans', sans-serif;
+    font-size: 13px; font-weight: 600; cursor: pointer;
+    transition: all 0.15s; margin-top: 8px;
+  }
+  .btn-add-color:hover { background: var(--rose); color: white; border-style: solid; }
+
+  /* COMPLEXITY BUTTONS */
+  .complexity-btn {
+    flex: 1; padding: 10px 6px; background: var(--cream);
+    border: 2px solid var(--border); border-radius: 14px;
+    font-size: 20px; cursor: pointer; transition: all 0.15s;
+    text-align: center; font-family: 'DM Sans', sans-serif;
+    color: var(--text);
+  }
+  .complexity-btn.active {
+    background: var(--rose-bg); border-color: var(--rose);
+  }
+  .complexity-btn:hover { border-color: var(--rose2); }
+
+  /* TOGGLE */
+  .toggle-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 10px 0; border-bottom: 1px solid var(--border2);
+  }
+  .toggle-row:last-child { border-bottom: none; padding-bottom: 0; }
+  .toggle-row:first-child { padding-top: 0; }
+
+  .toggle-label { font-size: 13px; color: var(--text); }
+  .toggle-sub { font-size: 11px; color: var(--muted); margin-top: 1px; }
+
+  .toggle {
+    position: relative; width: 40px; height: 22px;
+    flex-shrink: 0;
+  }
+  .toggle input { opacity: 0; width: 0; height: 0; }
+  .toggle-slider {
+    position: absolute; inset: 0; background: var(--border);
+    border-radius: 22px; cursor: pointer; transition: 0.2s;
+  }
+  .toggle-slider::before {
+    content: ''; position: absolute;
+    width: 16px; height: 16px; left: 3px; top: 3px;
+    background: white; border-radius: 50%; transition: 0.2s;
+  }
+  .toggle input:checked + .toggle-slider { background: var(--rose); }
+  .toggle input:checked + .toggle-slider::before { transform: translateX(18px); }
+
+  /* RESULT */
+  .result-card {
+    background: linear-gradient(135deg, #2a1f1a 0%, #3d2a22 100%);
+    border-radius: 24px; padding: 24px;
+    margin-bottom: 14px; position: relative; overflow: hidden;
+  }
+
+  .result-card::before {
+    content: '🧶';
+    position: absolute; right: -10px; top: -10px;
+    font-size: 100px; opacity: 0.08;
+  }
+
+  .result-label {
+    font-size: 11px; color: rgba(255,255,255,0.5);
+    text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px;
+  }
+
+  .result-price {
+    font-family: 'Fraunces', serif;
+    font-size: 52px; font-weight: 900;
+    color: white; line-height: 1; letter-spacing: -2px;
+    margin-bottom: 4px;
+  }
+
+  .result-price span { font-size: 24px; color: rgba(255,255,255,0.6); }
+
+  .result-sub { font-size: 12px; color: rgba(255,255,255,0.4); margin-bottom: 20px; }
+
+  .result-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .result-item {
+    background: rgba(255,255,255,0.07);
+    border-radius: 12px; padding: 10px 12px;
+  }
+
+  .result-item-label { font-size: 10px; color: rgba(255,255,255,0.4); margin-bottom: 3px; }
+  .result-item-val { font-size: 14px; font-weight: 600; color: white; }
+
+  .margin-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(232,84,122,0.2); border: 1px solid rgba(232,84,122,0.3);
+    border-radius: 20px; padding: 4px 12px;
+    font-size: 12px; color: #f07a96; font-weight: 600;
+    margin-top: 12px;
+  }
+
+  /* BREAKDOWN */
+  .breakdown-list { display: flex; flex-direction: column; gap: 0; }
+
+  .breakdown-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 0; border-bottom: 1px solid var(--border2);
+  }
+  .breakdown-item:last-child { border-bottom: none; }
+
+  .breakdown-dot {
+    width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
+  }
+
+  .breakdown-name { flex: 1; font-size: 13px; color: var(--text); }
+  .breakdown-pct { font-size: 11px; color: var(--muted); margin-right: 8px; }
+  .breakdown-val { font-size: 13px; font-weight: 600; color: var(--text); min-width: 70px; text-align: right; }
+
+  /* PRESETS */
+  .preset-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+
+  .preset-btn {
+    background: var(--surface); border: 1.5px solid var(--border);
+    border-radius: 14px; padding: 14px 12px; cursor: pointer;
+    transition: all 0.15s; text-align: left;
+  }
+  .preset-btn:hover { border-color: var(--rose); background: var(--rose-bg); }
+  .preset-emoji { font-size: 22px; display: block; margin-bottom: 4px; }
+  .preset-name { font-size: 12px; font-weight: 600; color: var(--text); }
+  .preset-desc { font-size: 10px; color: var(--muted); margin-top: 2px; }
+
+  /* MARGIN SLIDER */
+  input[type="range"] {
+    width: 100%; -webkit-appearance: none; height: 6px;
+    background: var(--border); border-radius: 3px; outline: none;
+    margin: 8px 0;
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none; width: 22px; height: 22px;
+    border-radius: 50%; background: var(--rose);
+    cursor: pointer; box-shadow: 0 2px 6px rgba(232,84,122,0.4);
+  }
+
+  .margin-display {
+    display: flex; justify-content: space-between;
+    font-size: 12px; color: var(--muted);
+  }
+  .margin-val { font-size: 18px; font-weight: 700; color: var(--rose); }
+
+  /* SAVE */
+  .btn-save {
+    width: 100%; padding: 16px; background: var(--rose);
+    color: white; border: none; border-radius: 16px;
+    font-family: 'Fraunces', serif; font-size: 18px; font-weight: 700;
+    cursor: pointer; transition: all 0.2s; margin-bottom: 10px;
+    box-shadow: 0 4px 16px rgba(232,84,122,0.3);
+  }
+  .btn-save:hover { background: var(--rose2); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(232,84,122,0.4); }
+
+  /* SAVED LIST */
+  .saved-item {
+    background: var(--surface); border: 1.5px solid var(--border);
+    border-radius: 16px; padding: 14px 16px; margin-bottom: 8px;
+    display: flex; align-items: center; gap: 12px;
+    box-shadow: 0 2px 8px rgba(140,100,80,0.04);
+  }
+  .saved-emoji { font-size: 28px; flex-shrink: 0; }
+  .saved-info { flex: 1; }
+  .saved-name { font-size: 14px; font-weight: 600; color: var(--text); }
+  .saved-meta { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .saved-price {
+    font-family: 'Fraunces', serif; font-size: 20px;
+    font-weight: 900; color: var(--rose);
+  }
+  .saved-del {
+    background: none; border: none; color: var(--light);
+    cursor: pointer; font-size: 14px; padding: 4px;
+  }
+  .saved-del:hover { color: var(--rose); }
+
+  /* TABS */
+  .tabs { display: flex; gap: 6px; margin-bottom: 16px; }
+  .tab {
+    flex: 1; padding: 10px; background: var(--surface);
+    border: 1.5px solid var(--border); border-radius: 12px;
+    font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 600;
+    cursor: pointer; transition: all 0.15s; color: var(--muted); text-align: center;
+  }
+  .tab.active { background: var(--rose); border-color: var(--rose); color: white; }
+
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* TOAST */
+  .toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px);
+    background: var(--text); color: white; padding: 10px 20px; border-radius: 30px;
+    font-size: 13px; font-weight: 600; transition: transform 0.3s ease;
+    z-index: 999; pointer-events: none; white-space: nowrap;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  select option { background: white; }
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+  <header>
+    <span class="header-icon">🧶</span>
+    <h1>Ami<span>Calc</span></h1>
+    <div class="subtitle">Calculadora de precio para amigurumis · Pesos chilenos</div>
+  </header>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('calcular')">🧮 Calcular</button>
+    <button class="tab" onclick="switchTab('guardados')">📦 Guardados</button>
+    <button class="tab" onclick="switchTab('config')">⚙️ Configuración</button>
+  </div>
+
+  <!-- ═══ TAB CALCULAR ═══ -->
+  <div class="tab-content active" id="tab-calcular">
+
+    <!-- PRESETS -->
+    <div class="preset-grid" id="presetGrid"></div>
+
+    <!-- NOMBRE -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-icon" style="background:#fdeef3">🏷️</div>
+        <div>
+          <div class="section-title">Datos del amigurumi</div>
+          <div class="section-sub">Nombre y emoji para identificarlo</div>
+        </div>
+      </div>
+      <div class="row2">
+        <div class="field" style="flex:0.3">
+          <div class="field-label">Emoji</div>
+          <input type="text" id="emojiInput" value="🐻" maxlength="2" style="text-align:center;font-size:22px;padding:8px">
+        </div>
+        <div class="field" style="flex:1">
+          <div class="field-label">Nombre del modelo</div>
+          <input type="text" id="nombreInput" placeholder="ej. Osito mediano, Conejita...">
+        </div>
+      </div>
+    </div>
+
+    <!-- CHENILLE -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-icon" style="background:#f3eeff">🎀</div>
+        <div>
+          <div class="section-title">Hilo Chenille</div>
+          <div class="section-sub">Agrega los colores que usa este amigurumi</div>
+        </div>
+      </div>
+
+      <div style="margin-bottom:12px">
+        <div class="field-label">Precio del ovillo <span class="field-hint">por ovillo completo</span></div>
+        <div class="input-wrap has-prefix has-suffix">
+          <span class="input-prefix">$</span>
+          <input type="number" id="precioOvillo" value="3500" min="0" step="100" oninput="calcular()">
+          <span class="input-suffix">CLP</span>
+        </div>
+      </div>
+
+      <div style="margin-bottom:12px">
+        <div class="field-label">Gramos por ovillo <span class="field-hint">normalmente 100g</span></div>
+        <div class="input-wrap has-suffix">
+          <input type="number" id="gramosOvillo" value="100" min="1" step="1" oninput="calcular()">
+          <span class="input-suffix">g</span>
+        </div>
+      </div>
+
+      <div class="field-label" style="margin-bottom:8px">Colores usados <span class="field-hint">nombre + gramos por color</span></div>
+      <div class="color-list" id="colorList"></div>
+      <button class="btn-add-color" onclick="addColor()">+ Agregar color</button>
+
+      <div style="margin-top:14px;padding:10px 12px;background:var(--lilac-bg);border-radius:12px;border:1px solid #d4b8f5">
+        <div style="font-size:11px;color:var(--lilac);font-weight:600;margin-bottom:4px">RESUMEN CHENILLE</div>
+        <div style="display:flex;gap:16px;font-size:13px">
+          <div>Total: <b id="totalGramos">0</b>g</div>
+          <div>≈ <b id="totalOvillos">0</b> ovillos</div>
+          <div>Costo: <b id="costoChenille">$0</b></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MATERIALES -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-icon" style="background:#edfbf5">🧸</div>
+        <div>
+          <div class="section-title">Materiales</div>
+          <div class="section-sub">Relleno, ojos y accesorios</div>
+        </div>
+      </div>
+
+      <div class="row2">
+        <div class="field">
+          <div class="field-label">Relleno algodón <span class="field-hint">gramos</span></div>
+          <div class="input-wrap has-suffix">
+            <input type="number" id="grRellenoInput" value="50" min="0" oninput="calcular()">
+            <span class="input-suffix">g</span>
+          </div>
+        </div>
+        <div class="field">
+          <div class="field-label">Precio relleno <span class="field-hint">por 100g</span></div>
+          <div class="input-wrap has-prefix">
+            <span class="input-prefix">$</span>
+            <input type="number" id="precioRellenoInput" value="800" min="0" step="100" oninput="calcular()">
+          </div>
+        </div>
+      </div>
+
+      <div class="row2">
+        <div class="field">
+          <div class="field-label">Ojos de seguridad</div>
+          <div class="input-wrap has-suffix">
+            <input type="number" id="cantOjos" value="2" min="0" oninput="calcular()">
+            <span class="input-suffix">und</span>
+          </div>
+        </div>
+        <div class="field">
+          <div class="field-label">Precio c/ojo</div>
+          <div class="input-wrap has-prefix">
+            <span class="input-prefix">$</span>
+            <input type="number" id="precioOjo" value="150" min="0" step="50" oninput="calcular()">
+          </div>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="field-label">Hilo de coser / aguja (por pieza)</div>
+        <div class="input-wrap has-prefix">
+          <span class="input-prefix">$</span>
+          <input type="number" id="costoHilo" value="100" min="0" step="50" oninput="calcular()">
+        </div>
+      </div>
+
+      <!-- Accesorios extra -->
+      <div class="field-label" style="margin-top:12px;margin-bottom:8px">Accesorios adicionales</div>
+      <div id="accesoriosList"></div>
+      <button class="btn-add-color" onclick="addAccesorio()" style="background:var(--mint-bg);border-color:#7ecfb8;color:var(--mint)">+ Agregar accesorio</button>
+    </div>
+
+    <!-- EMPAQUE -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-icon" style="background:#fff8ec">🎁</div>
+        <div>
+          <div class="section-title">Empaque y entrega</div>
+          <div class="section-sub">Costos de presentación</div>
+        </div>
+      </div>
+
+      <div class="row2">
+        <div class="field">
+          <div class="field-label">Bolsa / caja</div>
+          <div class="input-wrap has-prefix">
+            <span class="input-prefix">$</span>
+            <input type="number" id="costoBolsa" value="300" min="0" step="50" oninput="calcular()">
+          </div>
+        </div>
+        <div class="field">
+          <div class="field-label">Etiqueta / tarjeta</div>
+          <div class="input-wrap has-prefix">
+            <span class="input-prefix">$</span>
+            <input type="number" id="costoEtiqueta" value="200" min="0" step="50" oninput="calcular()">
+          </div>
+        </div>
+      </div>
+
+      <div class="toggle-row">
+        <div>
+          <div class="toggle-label">Incluir costo de envío</div>
+          <div class="toggle-sub">Se suma al precio final</div>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" id="incluirEnvio" onchange="calcular()">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+      <div id="envioField" style="display:none;margin-top:10px">
+        <div class="field-label">Costo de envío promedio</div>
+        <div class="input-wrap has-prefix">
+          <span class="input-prefix">$</span>
+          <input type="number" id="costoEnvio" value="3000" min="0" step="500" oninput="calcular()">
+        </div>
+      </div>
+    </div>
+
+    <!-- MANO DE OBRA -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-icon" style="background:#fdeef3">🤲</div>
+        <div>
+          <div class="section-title">Mano de obra</div>
+          <div class="section-sub">Por complejidad + multiplicador sobre materiales</div>
+        </div>
+      </div>
+
+      <!-- COMPLEJIDAD -->
+      <div class="field-label" style="margin-bottom:8px">Nivel de complejidad</div>
+      <div style="display:flex;gap:8px;margin-bottom:14px">
+        <button class="complexity-btn active" id="btn-simple" onclick="setComplejidad('simple')">
+          🟢<div style="font-size:12px;font-weight:700;margin-top:3px">Simple</div>
+          <div style="font-size:10px;color:var(--muted)" id="lbl-simple">$0</div>
+        </button>
+        <button class="complexity-btn" id="btn-medio" onclick="setComplejidad('medio')">
+          🟡<div style="font-size:12px;font-weight:700;margin-top:3px">Medio</div>
+          <div style="font-size:10px;color:var(--muted)" id="lbl-medio">$0</div>
+        </button>
+        <button class="complexity-btn" id="btn-complejo" onclick="setComplejidad('complejo')">
+          🔴<div style="font-size:12px;font-weight:700;margin-top:3px">Complejo</div>
+          <div style="font-size:10px;color:var(--muted)" id="lbl-complejo">$0</div>
+        </button>
+      </div>
+
+      <!-- MULTIPLICADOR -->
+      <div class="field">
+        <div class="field-label">Multiplicador sobre materiales <span class="field-hint">extra por uso de insumos</span></div>
+        <div class="input-wrap has-suffix">
+          <input type="number" id="multiplicador" value="1.5" min="1" max="5" step="0.1" oninput="calcular()">
+          <span class="input-suffix">×</span>
+        </div>
+        <div style="font-size:11px;color:var(--muted);margin-top:5px" id="multiExplica">Los materiales se multiplicarán por 1.5 en el cálculo de mano de obra</div>
+      </div>
+
+      <!-- RESULTADO MO -->
+      <div style="margin-top:12px;padding:12px;background:var(--rose-bg);border-radius:12px;border:1px solid #f5c0cc">
+        <div style="font-size:10px;color:var(--rose);font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px">Mano de obra calculada</div>
+        <div style="display:flex;gap:16px;font-size:13px">
+          <div>Complejidad: <b id="moComplejidad">$0</b></div>
+          <div>Extra mat.: <b id="moExtra">$0</b></div>
+        </div>
+        <div style="font-size:15px;font-weight:700;color:var(--rose);margin-top:6px">Total MO: <span id="moTotal">$0</span></div>
+      </div>
+    </div>
+
+    <!-- COSTOS FIJOS -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-icon" style="background:#fff8ec">🏠</div>
+        <div>
+          <div class="section-title">Costos fijos prorrateados</div>
+          <div class="section-sub">Parte de tus gastos mensuales por pieza</div>
+        </div>
+      </div>
+
+      <div class="toggle-row">
+        <div>
+          <div class="toggle-label">Incluir costos fijos</div>
+          <div class="toggle-sub">Luz, arriendo taller, herramientas</div>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" id="incluirFijos" onchange="toggleFijos()">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+
+      <div id="fijosFields" style="display:none;margin-top:12px">
+        <div class="row2">
+          <div class="field">
+            <div class="field-label">Costo fijo mensual</div>
+            <div class="input-wrap has-prefix">
+              <span class="input-prefix">$</span>
+              <input type="number" id="costoFijoMensual" value="20000" min="0" step="1000" oninput="calcular()">
+            </div>
+          </div>
+          <div class="field">
+            <div class="field-label">Piezas al mes</div>
+            <div class="input-wrap has-suffix">
+              <input type="number" id="piezasMes" value="10" min="1" oninput="calcular()">
+              <span class="input-suffix">und</span>
+            </div>
+          </div>
+        </div>
+        <div style="padding:8px 12px;background:var(--amber-bg);border-radius:10px;font-size:12px;color:var(--amber)">
+          Costo fijo por pieza: <b id="costoFijoPieza">$0</b>
+        </div>
+      </div>
+    </div>
+
+    <!-- MARKETPLACE -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-icon" style="background:#f3eeff">🛍️</div>
+        <div>
+          <div class="section-title">Comisión marketplace</div>
+          <div class="section-sub">Instagram, Mercado Libre, Etsy, etc.</div>
+        </div>
+      </div>
+      <div class="toggle-row">
+        <div>
+          <div class="toggle-label">Vendo por plataforma</div>
+          <div class="toggle-sub">Agrega la comisión al precio</div>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" id="incluirComision" onchange="toggleComision()">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+      <div id="comisionField" style="display:none;margin-top:12px">
+        <div class="field-label">Comisión de la plataforma</div>
+        <div class="input-wrap has-suffix">
+          <input type="number" id="pctComision" value="13" min="0" max="50" step="0.5" oninput="calcular()">
+          <span class="input-suffix">%</span>
+        </div>
+        <div style="font-size:11px;color:var(--muted);margin-top:6px">Mercado Libre ~13% · Etsy ~6.5% · Instagram 0%</div>
+      </div>
+    </div>
+
+    <!-- MARGEN -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-icon" style="background:#fdeef3">📈</div>
+        <div>
+          <div class="section-title">Margen de utilidad</div>
+          <div class="section-sub">Ganancia sobre el costo total</div>
+        </div>
+      </div>
+      <div style="text-align:center;margin-bottom:8px">
+        <div class="margin-val" id="margenDisplay">40%</div>
+      </div>
+      <input type="range" id="margenSlider" min="10" max="100" value="40" step="5" oninput="updateMargen()">
+      <div class="margin-display">
+        <span>10% mínimo</span>
+        <span>100% excelente</span>
+      </div>
+    </div>
+
+    <!-- RESULTADO -->
+    <div class="result-card" id="resultCard">
+      <div class="result-label">Precio de venta sugerido</div>
+      <div class="result-price"><span>$</span><span id="precioFinal">0</span></div>
+      <div class="result-sub" id="redondeado"></div>
+      <div class="result-grid">
+        <div class="result-item">
+          <div class="result-item-label">Costo total</div>
+          <div class="result-item-val" id="costoTotal">$0</div>
+        </div>
+        <div class="result-item">
+          <div class="result-item-label">Tu ganancia</div>
+          <div class="result-item-val" id="ganancia">$0</div>
+        </div>
+        <div class="result-item">
+          <div class="result-item-label">Costo materiales</div>
+          <div class="result-item-val" id="costoMat">$0</div>
+        </div>
+        <div class="result-item">
+          <div class="result-item-label">Mano de obra</div>
+          <div class="result-item-val" id="costoMO">$0</div>
+        </div>
+      </div>
+      <div class="margin-badge">✨ <span id="margenReal">0</span>% de margen</div>
+    </div>
+
+    <!-- DESGLOSE -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-icon" style="background:#fdeef3">📊</div>
+        <div><div class="section-title">Desglose de costos</div></div>
+      </div>
+      <div class="breakdown-list" id="breakdownList"></div>
+    </div>
+
+    <button class="btn-save" onclick="guardarAmigurumi()">💾 Guardar este amigurumi</button>
+
+  </div><!-- /tab calcular -->
+
+  <!-- ═══ TAB GUARDADOS ═══ -->
+  <div class="tab-content" id="tab-guardados">
+    <div id="savedList">
+      <div style="text-align:center;padding:48px 20px;color:var(--muted)">
+        <div style="font-size:40px;margin-bottom:12px">📦</div>
+        <div style="font-size:14px">Aún no hay amigurumis guardados</div>
+        <div style="font-size:12px;margin-top:4px">Calcula uno y toca "Guardar"</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ TAB CONFIG ═══ -->
+  <div class="tab-content" id="tab-config">
+    <div class="section">
+      <div class="section-header">
+        <div class="section-icon" style="background:#fdeef3">🎯</div>
+        <div><div class="section-title">Valores por defecto</div><div class="section-sub">Se usan al iniciar cada cálculo</div></div>
+      </div>
+      <div class="field">
+        <div class="field-label">Precio ovillo chenille</div>
+        <div class="input-wrap has-prefix"><span class="input-prefix">$</span>
+        <input type="number" id="cfPrecioOvillo" value="3500" oninput="saveConfig()"></div>
+      </div>
+      <div class="field">
+        <div class="field-label">Gramos por ovillo</div>
+        <div class="input-wrap has-suffix">
+        <input type="number" id="cfGramosOvillo" value="100" oninput="saveConfig()">
+        <span class="input-suffix">g</span></div>
+      </div>
+      <div class="field">
+        <div class="field-label">Precio relleno algodón (por 100g)</div>
+        <div class="input-wrap has-prefix"><span class="input-prefix">$</span>
+        <input type="number" id="cfPrecioRelleno" value="800" oninput="saveConfig()"></div>
+      </div>
+      <div class="field">
+        <div class="field-label">🟢 MO nivel Simple</div>
+        <div class="input-wrap has-prefix"><span class="input-prefix">$</span>
+        <input type="number" id="cfMoSimple" value="5000" step="500" oninput="saveConfig();calcular()"></div>
+      </div>
+      <div class="field">
+        <div class="field-label">🟡 MO nivel Medio</div>
+        <div class="input-wrap has-prefix"><span class="input-prefix">$</span>
+        <input type="number" id="cfMoMedio" value="10000" step="500" oninput="saveConfig();calcular()"></div>
+      </div>
+      <div class="field">
+        <div class="field-label">🔴 MO nivel Complejo</div>
+        <div class="input-wrap has-prefix"><span class="input-prefix">$</span>
+        <input type="number" id="cfMoComplejo" value="18000" step="500" oninput="saveConfig();calcular()"></div>
+      </div>
+      <div class="field">
+        <div class="field-label">Precio ojos de seguridad (c/u)</div>
+        <div class="input-wrap has-prefix"><span class="input-prefix">$</span>
+        <input type="number" id="cfPrecioOjo" value="150" oninput="saveConfig()"></div>
+      </div>
+      <div class="field">
+        <div class="field-label">Costo bolsa/empaque</div>
+        <div class="input-wrap has-prefix"><span class="input-prefix">$</span>
+        <input type="number" id="cfBolsa" value="300" oninput="saveConfig()"></div>
+      </div>
+      <div class="field">
+        <div class="field-label">Margen de utilidad por defecto</div>
+        <div class="input-wrap has-suffix">
+        <input type="number" id="cfMargen" value="40" min="10" max="100" oninput="saveConfig()">
+        <span class="input-suffix">%</span></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <div class="section-icon" style="background:#fff8ec">🏷️</div>
+        <div><div class="section-title">Modelos guardados como presets</div><div class="section-sub">Aparecen como accesos rápidos</div></div>
+      </div>
+      <div style="font-size:12px;color:var(--muted);line-height:1.6">
+        Los amigurumis que guardas aparecen como presets en la calculadora para reutilizarlos rápidamente. Puedes eliminarlos desde la pestaña "Guardados".
+      </div>
+    </div>
+  </div>
+
+</div><!-- /wrapper -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════════════════════
+let colors = [];
+let accesorios = [];
+let config = JSON.parse(localStorage.getItem('ami_config') || '{}');
+let saved = JSON.parse(localStorage.getItem('ami_saved') || '[]');
+let complejidadActual = 'simple';
+
+function setComplejidad(nivel) {
+  complejidadActual = nivel;
+  ['simple','medio','complejo'].forEach(n => {
+    document.getElementById('btn-' + n).classList.toggle('active', n === nivel);
+  });
+  calcular();
+}
+
+const COLORS_PALETTE = ['#e8547a','#9b72cf','#2d9b7a','#d4820a','#4a90d9','#e84393','#5cb85c','#d9534f','#f0a500','#7b68ee'];
+
+// ══════════════════════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════════════════════
+function init() {
+  loadConfig();
+  addColor('#e8547a', 'Principal', 80);
+  addColor('#9b72cf', 'Detalle', 20);
+  calcular();
+  renderSaved();
+  renderPresets();
+}
+
+function loadConfig() {
+  const defaults = { precioOvillo:3500, gramosOvillo:100, precioRelleno:800, precioOjo:150, bolsa:300, margen:40, moSimple:5000, moMedio:10000, moComplejo:18000 };
+  config = { ...defaults, ...config };
+  document.getElementById('cfPrecioOvillo').value = config.precioOvillo;
+  document.getElementById('cfGramosOvillo').value = config.gramosOvillo;
+  document.getElementById('cfPrecioRelleno').value = config.precioRelleno;
+  document.getElementById('cfPrecioOjo').value = config.precioOjo;
+  document.getElementById('cfBolsa').value = config.bolsa;
+  document.getElementById('cfMargen').value = config.margen;
+  document.getElementById('cfMoSimple').value = config.moSimple;
+  document.getElementById('cfMoMedio').value = config.moMedio;
+  document.getElementById('cfMoComplejo').value = config.moComplejo;
+
+  document.getElementById('precioOvillo').value = config.precioOvillo;
+  document.getElementById('gramosOvillo').value = config.gramosOvillo;
+  document.getElementById('precioRellenoInput').value = config.precioRelleno;
+  document.getElementById('precioOjo').value = config.precioOjo;
+  document.getElementById('costoBolsa').value = config.bolsa;
+  document.getElementById('margenSlider').value = config.margen;
+  document.getElementById('margenDisplay').textContent = config.margen + '%';
+}
+
+function saveConfig() {
+  config = {
+    precioOvillo: +document.getElementById('cfPrecioOvillo').value,
+    gramosOvillo: +document.getElementById('cfGramosOvillo').value,
+    precioRelleno: +document.getElementById('cfPrecioRelleno').value,
+    precioOjo: +document.getElementById('cfPrecioOjo').value,
+    bolsa: +document.getElementById('cfBolsa').value,
+    margen: +document.getElementById('cfMargen').value,
+    moSimple: +document.getElementById('cfMoSimple').value,
+    moMedio: +document.getElementById('cfMoMedio').value,
+    moComplejo: +document.getElementById('cfMoComplejo').value,
+  };
+  localStorage.setItem('ami_config', JSON.stringify(config));
+}
+
+// ══════════════════════════════════════════════════════════════
+// COLORS
+// ══════════════════════════════════════════════════════════════
+function addColor(hex, nombre, gramos) {
+  const id = Date.now() + Math.random();
+  const color = hex || COLORS_PALETTE[colors.length % COLORS_PALETTE.length];
+  colors.push({ id, hex: color, nombre: nombre||'', gramos: gramos||0 });
+  renderColors();
+  calcular();
+}
+
+function removeColor(id) {
+  colors = colors.filter(c => c.id !== id);
+  renderColors();
+  calcular();
+}
+
+function renderColors() {
+  const list = document.getElementById('colorList');
+  list.innerHTML = '';
+  colors.forEach(c => {
+    const div = document.createElement('div');
+    div.className = 'color-item';
+    div.innerHTML = `
+      <div class="color-swatch">
+        <input type="color" value="${c.hex}" onchange="updateColor(${c.id},'hex',this.value)">
+      </div>
+      <input class="color-name" type="text" placeholder="Color / parte" value="${c.nombre}" oninput="updateColor(${c.id},'nombre',this.value)">
+      <input class="color-grams" type="number" placeholder="g" value="${c.gramos||''}" min="0" oninput="updateColor(${c.id},'gramos',+this.value)">
+      <span style="font-size:10px;color:var(--muted)">g</span>
+      <button class="color-del" onclick="removeColor(${c.id})">✕</button>`;
+    list.appendChild(div);
+  });
+}
+
+function updateColor(id, field, val) {
+  const c = colors.find(x => x.id === id);
+  if (c) { c[field] = val; calcular(); }
+}
+
+// ══════════════════════════════════════════════════════════════
+// ACCESORIOS
+// ══════════════════════════════════════════════════════════════
+function addAccesorio() {
+  const id = Date.now();
+  accesorios.push({ id, nombre: '', costo: 0 });
+  renderAccesorios();
+}
+
+function removeAccesorio(id) {
+  accesorios = accesorios.filter(a => a.id !== id);
+  renderAccesorios();
+  calcular();
+}
+
+function renderAccesorios() {
+  const list = document.getElementById('accesoriosList');
+  list.innerHTML = '';
+  accesorios.forEach(a => {
+    const div = document.createElement('div');
+    div.className = 'color-item';
+    div.style.marginBottom = '8px';
+    div.innerHTML = `
+      <input class="color-name" type="text" placeholder="ej. Lazo, nariz, ropa..." value="${a.nombre}" oninput="updateAcc(${a.id},'nombre',this.value)" style="flex:2">
+      <span style="font-size:13px;color:var(--muted);font-weight:600">$</span>
+      <input class="color-grams" type="number" placeholder="0" value="${a.costo||''}" min="0" oninput="updateAcc(${a.id},'costo',+this.value)" style="width:80px">
+      <button class="color-del" onclick="removeAccesorio(${a.id})">✕</button>`;
+    list.appendChild(div);
+  });
+}
+
+function updateAcc(id, field, val) {
+  const a = accesorios.find(x => x.id === id);
+  if (a) { a[field] = val; calcular(); }
+}
+
+// ══════════════════════════════════════════════════════════════
+// TOGGLES
+// ══════════════════════════════════════════════════════════════
+function toggleFijos() {
+  document.getElementById('fijosFields').style.display =
+    document.getElementById('incluirFijos').checked ? 'block' : 'none';
+  calcular();
+}
+
+function toggleComision() {
+  document.getElementById('comisionField').style.display =
+    document.getElementById('incluirComision').checked ? 'block' : 'none';
+  calcular();
+}
+
+document.getElementById('incluirEnvio').addEventListener('change', function() {
+  document.getElementById('envioField').style.display = this.checked ? 'block' : 'none';
+  calcular();
+});
+
+function updateMargen() {
+  const v = document.getElementById('margenSlider').value;
+  document.getElementById('margenDisplay').textContent = v + '%';
+  calcular();
+}
+
+// ══════════════════════════════════════════════════════════════
+// CALCULAR
+// ══════════════════════════════════════════════════════════════
+function calcular() {
+  const precioOvillo = +document.getElementById('precioOvillo').value || 0;
+  const gramosOvillo = +document.getElementById('gramosOvillo').value || 100;
+  const precioPorGramo = precioOvillo / gramosOvillo;
+
+  // Chenille
+  const totalGramos = colors.reduce((s, c) => s + (c.gramos||0), 0);
+  const ovillosNecesarios = totalGramos / gramosOvillo;
+  const costoChenille = totalGramos * precioPorGramo;
+
+  document.getElementById('totalGramos').textContent = totalGramos;
+  document.getElementById('totalOvillos').textContent = ovillosNecesarios.toFixed(2);
+  document.getElementById('costoChenille').textContent = fmt(costoChenille);
+
+  // Relleno
+  const grRelleno = +document.getElementById('grRellenoInput').value || 0;
+  const precioRelleno100 = +document.getElementById('precioRellenoInput').value || 0;
+  const costoRelleno = (grRelleno / 100) * precioRelleno100;
+
+  // Ojos
+  const cantOjos = +document.getElementById('cantOjos').value || 0;
+  const precioOjo = +document.getElementById('precioOjo').value || 0;
+  const costoOjos = cantOjos * precioOjo;
+
+  // Hilo de coser
+  const costoHilo = +document.getElementById('costoHilo').value || 0;
+
+  // Accesorios
+  const costoAccesorios = accesorios.reduce((s, a) => s + (a.costo||0), 0);
+
+  // Empaque
+  const costoBolsa = +document.getElementById('costoBolsa').value || 0;
+  const costoEtiqueta = +document.getElementById('costoEtiqueta').value || 0;
+  const costoEmpaque = costoBolsa + costoEtiqueta;
+
+  // Envío
+  const incluirEnvio = document.getElementById('incluirEnvio').checked;
+  const costoEnvio = incluirEnvio ? (+document.getElementById('costoEnvio').value || 0) : 0;
+
+  // Calcular costo materiales antes de MO
+  const costoMaterialesTemp = costoChenille + costoRelleno + costoOjos + costoHilo + costoAccesorios + costoEmpaque + costoEnvio;
+
+  // Mano de obra — complejidad + multiplicador
+  const cfSimple = document.getElementById('cfMoSimple');
+  const cfMedio = document.getElementById('cfMoMedio');
+  const cfComplejo = document.getElementById('cfMoComplejo');
+  const niveles = {
+    simple: cfSimple ? (+cfSimple.value||5000) : (config.moSimple||5000),
+    medio: cfMedio ? (+cfMedio.value||10000) : (config.moMedio||10000),
+    complejo: cfComplejo ? (+cfComplejo.value||18000) : (config.moComplejo||18000)
+  };
+  const costoComplejidad = niveles[complejidadActual] || 0;
+  const multiplicador = +document.getElementById('multiplicador').value || 1;
+  const costoExtraMat = costoMaterialesTemp * (multiplicador - 1);
+  const costoMO = costoComplejidad + costoExtraMat;
+
+  // Update MO labels
+  document.getElementById('lbl-simple').textContent = fmt(niveles.simple);
+  document.getElementById('lbl-medio').textContent = fmt(niveles.medio);
+  document.getElementById('lbl-complejo').textContent = fmt(niveles.complejo);
+  document.getElementById('moComplejidad').textContent = fmt(costoComplejidad);
+  document.getElementById('moExtra').textContent = fmt(costoExtraMat);
+  document.getElementById('moTotal').textContent = fmt(costoMO);
+  document.getElementById('multiExplica').textContent = 'Los materiales (' + fmt(costoMateriales) + ') se multiplicarán por ' + multiplicador + ' → extra: ' + fmt(costoExtraMat);
+
+  // Costos fijos
+  const incluirFijos = document.getElementById('incluirFijos').checked;
+  let costoFijo = 0;
+  if (incluirFijos) {
+    const mensual = +document.getElementById('costoFijoMensual').value || 0;
+    const piezas = +document.getElementById('piezasMes').value || 1;
+    costoFijo = mensual / piezas;
+    document.getElementById('costoFijoPieza').textContent = fmt(costoFijo);
+  }
+
+  // Total costo
+  const costoMateriales = costoChenille + costoRelleno + costoOjos + costoHilo + costoAccesorios + costoEmpaque + costoEnvio;
+  const costoBase = costoMateriales + costoMO + costoFijo;
+
+  // Margen
+  const margen = +document.getElementById('margenSlider').value / 100;
+  let precioSinComision = costoBase * (1 + margen);
+
+  // Comisión marketplace
+  const incluirComision = document.getElementById('incluirComision').checked;
+  let costoComision = 0;
+  let precioFinal = precioSinComision;
+  if (incluirComision) {
+    const pct = +document.getElementById('pctComision').value / 100;
+    // Para que después de descontar la comisión quede el precio con margen
+    precioFinal = precioSinComision / (1 - pct);
+    costoComision = precioFinal - precioSinComision;
+  }
+
+  const ganancia = precioFinal - costoBase - costoComision;
+  const margenReal = costoBase > 0 ? ((ganancia / costoBase) * 100) : 0;
+
+  // Redondear a 500 más cercano
+  const redondeado = Math.ceil(precioFinal / 500) * 500;
+
+  // Render resultado
+  document.getElementById('precioFinal').textContent = fmt(redondeado).replace('$','');
+  document.getElementById('redondeado').textContent = precioFinal !== redondeado
+    ? `Precio exacto: ${fmt(Math.round(precioFinal))} · Redondeado a $500`
+    : 'Precio redondeado al $500 más cercano';
+  document.getElementById('costoTotal').textContent = fmt(Math.round(costoBase));
+  document.getElementById('ganancia').textContent = fmt(Math.round(ganancia));
+  document.getElementById('costoMat').textContent = fmt(Math.round(costoMateriales));
+  document.getElementById('costoMO').textContent = fmt(Math.round(costoMO));
+  document.getElementById('margenReal').textContent = margenReal.toFixed(0);
+
+  // Desglose
+  const items = [
+    { name: 'Chenille', val: costoChenille, color: '#9b72cf' },
+    { name: 'Relleno algodón', val: costoRelleno, color: '#2d9b7a' },
+    { name: 'Ojos de seguridad', val: costoOjos, color: '#4a90d9' },
+    { name: 'Hilo/aguja', val: costoHilo, color: '#e84393' },
+    { name: 'Accesorios', val: costoAccesorios, color: '#f0a500' },
+    { name: 'Empaque', val: costoEmpaque, color: '#d4820a' },
+    { name: 'Envío', val: costoEnvio, color: '#7b68ee' },
+    { name: 'Mano de obra', val: costoMO, color: '#e8547a' },
+    { name: 'Costos fijos', val: costoFijo, color: '#5cb85c' },
+    { name: 'Comisión', val: costoComision, color: '#d9534f' },
+    { name: 'Ganancia', val: ganancia, color: '#2d9b7a' },
+  ].filter(i => i.val > 0);
+
+  const totalBD = items.reduce((s, i) => s + i.val, 0);
+  const bdList = document.getElementById('breakdownList');
+  bdList.innerHTML = items.map(i => `
+    <div class="breakdown-item">
+      <div class="breakdown-dot" style="background:${i.color}"></div>
+      <div class="breakdown-name">${i.name}</div>
+      <div class="breakdown-pct">${totalBD > 0 ? ((i.val/totalBD)*100).toFixed(0) : 0}%</div>
+      <div class="breakdown-val">${fmt(Math.round(i.val))}</div>
+    </div>`).join('');
+}
+
+// ══════════════════════════════════════════════════════════════
+// SAVE / PRESETS
+// ══════════════════════════════════════════════════════════════
+function guardarAmigurumi() {
+  const nombre = document.getElementById('nombreInput').value.trim() || 'Sin nombre';
+  const emoji = document.getElementById('emojiInput').value || '🧸';
+  const precio = Math.ceil(+(document.getElementById('precioFinal').textContent.replace(/\./g,'').replace(',','.')) / 500) * 500;
+
+  const item = {
+    id: Date.now(),
+    nombre, emoji, precio,
+    complejidad: complejidadActual,
+    gramos: colors.reduce((s,c) => s+c.gramos, 0),
+    fecha: new Date().toLocaleDateString('es-CL'),
+    colores: colors.map(c => ({...c})),
+    // snapshot of all inputs for reload
+    snap: captureSnap()
+  };
+
+  saved.unshift(item);
+  localStorage.setItem('ami_saved', JSON.stringify(saved));
+  renderSaved();
+  renderPresets();
+  showToast('✓ Guardado: ' + emoji + ' ' + nombre);
+}
+
+function captureSnap() {
+  return {
+    precioOvillo: document.getElementById('precioOvillo').value,
+    gramosOvillo: document.getElementById('gramosOvillo').value,
+    grRelleno: document.getElementById('grRellenoInput').value,
+    precioRelleno: document.getElementById('precioRellenoInput').value,
+    cantOjos: document.getElementById('cantOjos').value,
+    precioOjo: document.getElementById('precioOjo').value,
+    costoHilo: document.getElementById('costoHilo').value,
+    costoBolsa: document.getElementById('costoBolsa').value,
+    costoEtiqueta: document.getElementById('costoEtiqueta').value,
+    complejidad: complejidadActual,
+    multiplicador: document.getElementById('multiplicador').value,
+    margen: document.getElementById('margenSlider').value,
+    colors: colors.map(c=>({...c})),
+    accesorios: accesorios.map(a=>({...a}))
+  };
+}
+
+function loadSnap(snap) {
+  document.getElementById('precioOvillo').value = snap.precioOvillo;
+  document.getElementById('gramosOvillo').value = snap.gramosOvillo;
+  document.getElementById('grRellenoInput').value = snap.grRelleno;
+  document.getElementById('precioRellenoInput').value = snap.precioRelleno;
+  document.getElementById('cantOjos').value = snap.cantOjos;
+  document.getElementById('precioOjo').value = snap.precioOjo;
+  document.getElementById('costoHilo').value = snap.costoHilo;
+  document.getElementById('costoBolsa').value = snap.costoBolsa;
+  document.getElementById('costoEtiqueta').value = snap.costoEtiqueta;
+  if (snap.complejidad) setComplejidad(snap.complejidad);
+  if (snap.multiplicador) document.getElementById('multiplicador').value = snap.multiplicador;
+  document.getElementById('margenSlider').value = snap.margen;
+  document.getElementById('margenDisplay').textContent = snap.margen + '%';
+  colors = snap.colors || [];
+  accesorios = snap.accesorios || [];
+  renderColors();
+  renderAccesorios();
+  calcular();
+}
+
+function renderSaved() {
+  const list = document.getElementById('savedList');
+  if (saved.length === 0) {
+    list.innerHTML = `<div style="text-align:center;padding:48px 20px;color:var(--muted)"><div style="font-size:40px;margin-bottom:12px">📦</div><div style="font-size:14px">Aún no hay amigurumis guardados</div><div style="font-size:12px;margin-top:4px">Calcula uno y toca "Guardar"</div></div>`;
+    return;
+  }
+  list.innerHTML = saved.map(s => `
+    <div class="saved-item">
+      <div class="saved-emoji">${s.emoji}</div>
+      <div class="saved-info">
+        <div class="saved-name">${s.nombre}</div>
+        <div class="saved-meta">${s.gramos}g chenille · ${s.complejidad||'simple'} · ${s.fecha}</div>
+      </div>
+      <div class="saved-price">${fmt(s.precio)}</div>
+      <button class="saved-del" onclick="loadSaved(${s.id})">📋</button>
+      <button class="saved-del" onclick="deleteSaved(${s.id})">🗑️</button>
+    </div>`).join('');
+}
+
+function loadSaved(id) {
+  const s = saved.find(x => x.id === id);
+  if (!s || !s.snap) return;
+  document.getElementById('nombreInput').value = s.nombre;
+  document.getElementById('emojiInput').value = s.emoji;
+  loadSnap(s.snap);
+  switchTab('calcular');
+  showToast('Cargado: ' + s.emoji + ' ' + s.nombre);
+}
+
+function deleteSaved(id) {
+  if (!confirm('¿Eliminar este amigurumi guardado?')) return;
+  saved = saved.filter(s => s.id !== id);
+  localStorage.setItem('ami_saved', JSON.stringify(saved));
+  renderSaved();
+  renderPresets();
+}
+
+function renderPresets() {
+  const grid = document.getElementById('presetGrid');
+  if (saved.length === 0) { grid.innerHTML = ''; return; }
+  grid.innerHTML = saved.slice(0,4).map(s => `
+    <button class="preset-btn" onclick="loadSaved(${s.id})">
+      <span class="preset-emoji">${s.emoji}</span>
+      <div class="preset-name">${s.nombre}</div>
+      <div class="preset-desc">${fmt(s.precio)}</div>
+    </button>`).join('');
+}
+
+// ══════════════════════════════════════════════════════════════
+// TABS
+// ══════════════════════════════════════════════════════════════
+function switchTab(id) {
+  document.querySelectorAll('.tab').forEach((t,i) => {
+    const ids = ['calcular','guardados','config'];
+    t.classList.toggle('active', ids[i] === id);
+  });
+  document.querySelectorAll('.tab-content').forEach(tc => {
+    tc.classList.toggle('active', tc.id === 'tab-' + id);
+  });
+}
+
+// ══════════════════════════════════════════════════════════════
+// UTILS
+// ══════════════════════════════════════════════════════════════
+function fmt(n) {
+  return '$' + Math.round(n).toLocaleString('es-CL');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ══════════════════════════════════════════════════════════════
+// START
+// ══════════════════════════════════════════════════════════════
+init();
+</script>
+</body>
+</html>
